@@ -29,5 +29,22 @@ module Kontact
                end
       "+55 #{ddd} #{number}"
     end
+
+    def self.valid?(number)
+      match = number.match(/\A\+55 (\d{2}) (\d{4,5})-(\d{4})\z/)
+      return false unless match
+
+      ddd = match[1]
+      prefix = match[2]
+      return false unless DDDs.include?(ddd)
+
+      if prefix.length == 5
+        prefix.start_with?("9")
+      elsif prefix.length == 4
+        prefix[0].to_i.between?(2, 5)
+      else
+        false
+      end
+    end
   end
 end
