@@ -59,5 +59,18 @@ module Kontact
         return prefix unless [911, 411, 555].include?(prefix)
       end
     end
+
+    def self.valid?(number)
+      match = number.match(/\A\+1 (\d{3}) (\d{3})-(\d{4})\z/)
+      return false unless match
+
+      area = match[1]
+      prefix = match[2].to_i
+      return false unless AREAS.include?(area)
+      return false if [911, 411, 555].include?(prefix)
+      return false unless prefix.to_s[0].match?(/[2-9]/)
+
+      true
+    end
   end
 end
