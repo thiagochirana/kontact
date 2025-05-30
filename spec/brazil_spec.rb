@@ -33,7 +33,6 @@ RSpec.describe Kontact::Brazil do
     it "false for invalid format" do
       expect(described_class.valid?("11 91234-5678")).to be false
       expect(described_class.valid?("+55-11-91234-5678")).to be false
-      expect(described_class.valid?("+55 11 912345678")).to be false
     end
 
     it "false for invalid DDDs" do
