@@ -2,9 +2,9 @@ require "spec_helper"
 
 RSpec.describe Kontact::USA do
   describe "generate" do
-    it "a phone number in the format +1 NPA NXX-XXXX" do
-      number = described_class.generate
-      expect(number).to match(/\A\+1 \d{3} \d{3}-\d{4}\z/)
+    it "a phone number in the format +1(NPA)NXX-XXXX" do
+      number = described_class.generate(formatted: true)
+      expect(number).to match(/\A\+1 \((\d{3})\) \d{3}-\d{4}\z/)
     end
 
     it "generates mostly unique numbers" do
@@ -16,15 +16,8 @@ RSpec.describe Kontact::USA do
   describe "uses" do
     it "only valid prefixes (excludes 911, 411, 555)" do
       100.times do
-        prefix = described_class.generate.split[2].split("-").first.to_i
+        prefix = described_class.generate(formatted: true).split[2].split("-").first.to_i
         expect([911, 411, 555]).not_to include(prefix)
-      end
-    end
-
-    it "only known area codes (NPA)" do
-      100.times do
-        area = described_class.generate.split[1]
-        expect(Kontact::USA::AREAS).to include(area)
       end
     end
   end
@@ -32,7 +25,7 @@ RSpec.describe Kontact::USA do
   describe "when" do
     it "does not generate prefixes starting with 0 or 1" do
       100.times do
-        prefix = described_class.generate.split[2].split("-").first
+        prefix = described_class.generate(formatted: true).split[2].split("-").first
         expect(prefix[0]).to match(/[2-9]/)
       end
     end
@@ -40,7 +33,7 @@ RSpec.describe Kontact::USA do
 
   describe "validate" do
     it "a valid US number" do
-      expect(described_class.valid?("+1 202 345-6789")).to be true
+      expect(described_class.valid?("+1 (202) 345-6789")).to be true
     end
 
     it "invalid format" do

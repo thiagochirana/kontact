@@ -17,6 +17,15 @@ module Kontact
       91 92 93 94 95 96 97 98 99
     ].freeze
 
+    PATTERN = [
+      /\A\+55 \((\d{2})\) 9\d{4}-\d{4}\z/,
+      /\A\((\d{2})\) 9\d{4}-\d{4}\z/,
+      /\A\+55 \((\d{2})\) [2-5]\d{3}-\d{4}\z/,
+      /\A\((\d{2})\) [2-5]\d{3}-\d{4}\z/,
+      /\A\+55(\d{2})9\d{8}\z/,
+      /\A\+55(\d{2})[2-5]\d{7}\z/
+    ].freeze
+
     def self.generate(type: :mobile, formatted: false)
       ddd = DDD.sample
       number = case type
@@ -31,7 +40,15 @@ module Kontact
     end
 
     def self.valid?(number)
+      raise ArgumentError, "Number can not empty or blank" unless number
+
       number = number.strip
+
+      PATTERN.any? do |regex|
+        match = number.match(regex)
+        match && DDD.include?(match[1])
+      end
+
       digits = number.gsub(/\D/, "")
       digits = digits[2..] if digits.start_with?("55")
       return false unless [10, 11].include?(digits.length)

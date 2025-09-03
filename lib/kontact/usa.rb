@@ -45,6 +45,11 @@ module Kontact
       941 947 948 949 951 952 954 956 957
       959 970 971 972 973 975 976 978 979
       980 984 985 986 989
+    ].freeze
+
+    PATTERN = [
+      /\A\+1 \((\d{3})\) (\d{3})-(\d{4})\z/, # formatado
+      /\A\+1(\d{3})(\d{3})(\d{4})\z/ # compacto
     ]
 
     def self.generate(formatted: false)
@@ -61,16 +66,16 @@ module Kontact
     end
 
     def self.valid?(number)
-      match = number.match(/\A\+1 (\d{3}) (\d{3})-(\d{4})\z/)
-      return false unless match
+      raise ArgumentError, "Number can not be empty or blank" if number.nil? || number.strip.empty?
 
-      area = match[1]
-      prefix = match[2].to_i
-      return false unless AREAS.include?(area)
-      return false if [911, 411, 555].include?(prefix)
-      return false unless prefix.to_s[0].match?(/[2-9]/)
+      PATTERN.any? do |regex|
+        match = number.match(regex)
+        next false unless match
 
-      true
+        area = match[1]
+        prefix = match[2].to_i
+        AREAS.include?(area) && ![911, 411, 555].include?(prefix) && prefix.to_s[0].match?(/[2-9]/)
+      end
     end
   end
 end

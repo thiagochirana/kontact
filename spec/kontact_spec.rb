@@ -8,29 +8,29 @@ RSpec.describe Kontact do
     context "when country is :brazil" do
       it "returns true for valid brazilian number" do
         number = Kontact::Brazil.generate
-        expect(described_class.valid?(number, :brazil)).to be true
+        expect(described_class.valid?(number, country: :brazil)).to be true
       end
 
       it "returns false for invalid brazilian number" do
-        expect(described_class.valid?("+55 99 1234-5678", :brazil)).to be false
+        expect(described_class.valid?("+55 99 1234-5678", country: :brazil)).to be false
       end
     end
 
     context "when country is :usa" do
       it "returns true for valid US number" do
         number = Kontact::USA.generate
-        expect(described_class.valid?(number, :usa)).to be true
+        expect(described_class.valid?(number, country: :usa)).to be true
       end
 
       it "returns false for invalid US number" do
-        expect(described_class.valid?("+1 000 123-4567", :usa)).to be false
+        expect(described_class.valid?("+1 000 123-4567", country: :usa)).to be false
       end
     end
 
     context "when number is nil" do
       it "raises ArgumentError" do
         expect do
-          described_class.valid?(nil, :brazil)
+          described_class.valid?(nil, country: :brazil)
         end.to raise_error(ArgumentError, /Number can not empty or blank/)
       end
     end
@@ -38,7 +38,7 @@ RSpec.describe Kontact do
     context "when country is unsupported" do
       it "raises ArgumentError" do
         expect do
-          described_class.valid?("+55 11 91234-5678", :mexico)
+          described_class.valid?("+55 11 91234-5678", country: :mexico)
         end.to raise_error(ArgumentError, /Unsupported country/)
       end
     end
