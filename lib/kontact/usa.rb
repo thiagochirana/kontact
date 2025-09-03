@@ -47,10 +47,10 @@ module Kontact
       980 984 985 986 989
     ]
 
-    def self.generate(_type = :mobile)
+    def self.generate(formatted: false)
       area = AREAS.sample
       line_number = rand(1000..9999)
-      "+1 #{area} #{valid_prefix}-#{line_number}"
+      formatted ? "+1 (#{area}) #{valid_prefix}-#{line_number}" : "+1#{area}#{valid_prefix}#{line_number}"
     end
 
     def self.valid_prefix

@@ -3,18 +3,20 @@ require_relative "kontact/brazil"
 require_relative "kontact/usa"
 
 module Kontact
-  def self.generate(country = detect_country, type = :mobile)
+  def self.generate(country: :brazil, type: :mobile, formatted: false)
+    validate_country(country)
     case country.to_sym
     when :brazil
-      Brazil.generate(type)
+      Brazil.generate(type: type, formatted: formatted)
     when :usa
-      USA.generate(type)
+      USA.generate(formatted: formatted)
     else
       raise ArgumentError, "Unsupported country: #{country}"
     end
   end
 
-  def self.valid?(number, country = detect_country)
+  def self.valid?(number, country: :brazil)
+    validate_country(country)
     raise ArgumentError, "Number can not empty or blank" unless number
 
     case country.to_sym
@@ -38,6 +40,17 @@ module Kontact
       :usa
     else
       :brazil # as a main fallback
+    end
+  end
+
+  def self.validate_country(country)
+    case country.to_sym
+    when :brazil
+      :brazil
+    when :usa
+      :usa
+    else
+      raise ArgumentError, "Unsupported country: #{country}"
     end
   end
 end
