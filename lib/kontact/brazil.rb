@@ -23,10 +23,11 @@ module Kontact
       /\A\+55 \((\d{2})\) [2-5]\d{3}-\d{4}\z/,
       /\A\((\d{2})\) [2-5]\d{3}-\d{4}\z/,
       /\A\+55(\d{2})9\d{8}\z/,
+      /\A55(\d{2})9\d{8}\z/,
       /\A\+55(\d{2})[2-5]\d{7}\z/
     ].freeze
 
-    def self.generate(type: :mobile, formatted: false)
+    def self.generate(type: :mobile, formatted: false, international_prefix: false)
       ddd = DDD.sample
       number = case type
                when :mobile
@@ -36,7 +37,8 @@ module Kontact
                else
                  raise ArgumentError, "Invalid type: #{type}"
                end
-      formatted ? "+55 (#{ddd}) #{number}" : "+55#{ddd}#{number}"
+      n = formatted ? "55 (#{ddd}) #{number}" : "55#{ddd}#{number}"
+      international_prefix ? "+#{n}" : n
     end
 
     def self.valid?(number)
